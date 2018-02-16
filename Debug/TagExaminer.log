@@ -1,0 +1,5 @@
+﻿  TagExaminer.cpp
+c:\users\shmka\source\repos\tagexaminer\tagexaminer\tagexaminer.cpp(25): warning C4018: '<': signed/unsigned mismatch
+c:\users\shmka\source\repos\tagexaminer\tagexaminer\tagexaminer.cpp(96): warning C4018: '<': signed/unsigned mismatch
+c:\users\shmka\source\repos\tagexaminer\tagexaminer\tagexaminer.cpp(98): warning C4018: '<': signed/unsigned mismatch
+  TagExaminer.vcxproj -> C:\Users\shmka\source\repos\TagExaminer\Debug\TagExaminer.exe
