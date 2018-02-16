@@ -1,0 +1,5 @@
+/Debug
+stdafx.*
+*.vcproj
+*.vcproj.filters
+targetver.h
