@@ -31,6 +31,3 @@ private:
 	const double colMax = .3;	
 };
 
-/*
-
-
