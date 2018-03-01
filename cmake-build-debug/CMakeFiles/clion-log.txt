@@ -1,0 +1,15 @@
+"C:\Program Files\JetBrains\CLion 2017.3.3\bin\cmake\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\Users\shmka\CLionProjects\untitled1
+CMake Error at CMakeLists.txt:6 (include_directories):
+  Syntax error in cmake code at
+
+    C:/Users/shmka/CLionProjects/untitled1/CMakeLists.txt:6
+
+  when parsing string
+
+    C:\boost\boost_1_66_0\boost
+
+  Invalid character escape '\b'.
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/shmka/CLionProjects/untitled1/cmake-build-debug/CMakeFiles/CMakeOutput.log".
