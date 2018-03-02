@@ -103,129 +103,82 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
  */
 TagExaminer::Turns TagExaminer::determineTurning()
 {
-    //First determine if these columns have something in them.
-	//If the rover sees only a tag in column 3, and not 5, then it should
-    //Go in that direction.
-
-    if(columns[3].size() > 0 && columns[5].size() == 0) {
-        cout << "LEFT" << endl;
-        return LEFT;
+    if(distToTag(columns[4][0]) < minDist){
+        cout << "SUCCESS" << endl;
+        return SUCCESS;
     }
-    //Then the opposite, if there's a tag at 5 and not 3
-   else  if(columns[5].size() > 0 && columns[3].size() == 0) {
-        cout << "RIGHT" << endl;
-        return RIGHT;
-    }
-    // If both have tags,
-    else if(columns[3].size() > 0 && columns[5].size() > 0) {
-        Tag left = columns[3][0], right = columns[5][0];
-        //Distances from the rover to the closest rover in that column
 
-        double ldist = sqrt(pow(left.getPositionX(),2) + pow(left.getPositionY(),2) + pow(left.getPositionZ(),2));
-        double rdist = sqrt(pow(right.getPositionX(),2) + pow(right.getPositionY(),2) + pow(right.getPositionZ(),2));
+    if(columns[3].size() == 0 && columns[4].size() == 0 && columns[5].size() == 0) {
+        int foundTagIndex = -1;
+        for(int i = 0; i < columns.size(); i ++) {
+            if(i ==  3 || i == 4 || i == 5){
+                continue;
+            }
 
-        if((ldist - rdist) > (-1 * margin) && (ldist - rdist) < (margin)) {
-            cout << "STRAIGHT: ";
-            cout << ldist - rdist << endl;
-            return STRAIGHT;
-        }
-        else if(ldist > rdist) {
-            cout << "RIGHT" << endl;
-            return RIGHT;
-        }
-        else {
-            cout << "LEFT" << endl;
-            return LEFT;
-        }
-
-    }
-    else {
-        cout << "Other: ";
-        //A tag not in 3//5 has been found.
-        //Let's turn towards that tag.
-
-        //Find the column that has the tag
-        int tagCol = -1;
-        for (int i = 0; i < columns.size(); i++) {
-            if (columns[i].size() > 0) {
-                tagCol = i;
+            if(columns[i].size() > 0) {
+                foundTagIndex = i;
                 break;
             }
         }
 
-        //So now we have the column where its located
+        if(foundTagIndex > 4) {
+            cout << "RIGHT" << endl;
+            return RIGHT;
+        }else if (foundTagIndex < 4){
+            cout << "LEFT" << endl;
+            return LEFT;
+        }
+        else {
+            cout << "FAIL" << endl;
+            return FAIL;
+        }
+    }
 
-        //Check to see if
-        if (columns[tagCol].size() > 3) {
-            cout << "CORNER AREA";
-            //So we know its a long line so theres a corner near by
-            //So lets find another tag in a differnt column to determine
-            //Which corner we're in
+    //Find a long col
+    int longColIndex = -1;
+    for(int i = 0; i < columns.size(); i ++) {
+        if(columns[i].size() > 3) {
+            longColIndex = i;
+            break;
+        }
+    }
 
-            //So loop back through and find a range that we havent already
-            int anotherOne = -1;
-            for(int i = 0; i < columns.size(); i ++) {
-                if(i == tagCol) {
-                    continue;
-                }
-                if(columns[i].size() > 0) {
-                    //Found another
-                    anotherOne = i;
-                    break;
-                }
+    if(longColIndex == -1) {
+        cout << "FAIL" << endl;
+        return FAIL;
+    }else{
+        //Is there also a short line
+        int shortColIndex = -1;
+        for(int i = 0; i < columns.size(); i++) {
+            if(columns[i].size() < 3) {
+                shortColIndex = i;
+                break;
             }
+        }
 
-            if(anotherOne == -1) {
-                cout << "INCONCLUSIVE" << endl;
-                return OTHER;
-            }
-
-            if(columns[anotherOne].size() > 0 && columns[anotherOne].size() < 3) {
-                //Found another one that's not a long col.
-                //We can use this to determine if its a left or right Corner.
-            }else if(columns[anotherOne].size() > 3) {
-                //We found 2 long cols.... great...
-                //Find one that just has a size of less than 3 so we can find out which corner
-                //This dude is inside.
-                int align;
-                for(int i = 0; i < columns.size(); i ++) {
-                    if(i == tagCol || i == anotherOne) {
-                        continue;
-                    }else{
-
-                        if(columns[i].size() > 0 && columns[i].size() < 3) {
-
-                            //NOW, FIGURE OUT WHICH CORNER.
-                            //WE HAVE A LONG COLUMN AND ONE NOT IN THE COL. IF
-                            //IF THE SHORT IS TO THE LEFT OF LONG, THEN RIGHT COL
-                            //IF THE SHORT IS TO THE RGHT OF THE LONG, THEN LEFT COL;
-
-                            //LONG COL IS ANOTHERONE
-
-                            align = i;
-                        }else if(columns[i].size() > 3){
-                            cout << "INCONCLUSIVE" << endl;
-                            return OTHER;
-                        }
-                    }
-                }
-
-            }
-
-            return CORNER;
-        } else {
-            //Now that we have that,
-            if (tagCol == 4 || tagCol == 3 || tagCol == 5) {
-                //it's near the middle
-                cout << "STRAIGHT" << endl;
-                return STRAIGHT;
-            } else if (tagCol < 4) {
-                cout << "LEFT" << endl;
-                return LEFT;
-            } else {
+        if(shortColIndex == -1) {
+            cout << "FAIL" << endl;
+        }else{
+            if(longColIndex < shortColIndex) {
                 cout << "RIGHT" << endl;
                 return RIGHT;
+            }else{
+                cout << "LEFT" << endl;
+                return LEFT;
             }
+        }
+    }
+
+
+    if((columns[3].size() > 0 || columns[3].size() > 0 || columns[3].size() > 0) && (longColIndex == -1)){
+        if(abs(abs(distToTag(columns[3][0])) - abs(distToTag(columns[5][0]))) < margin){
+            cout << "STRAIGHT";
+            return STRAIGHT;
+        }
+        else if(distToTag(columns[3][0]) > distToTag(columns[5][0])){
+            return RIGHT;
+        }else{
+            return LEFT;
         }
     }
 }
@@ -244,4 +197,8 @@ void TagExaminer::clear(){
 	tags.clear();
         for( int i = 0; i < columns.size(); i++ )
             columns[i].clear();
+}
+
+double TagExaminer::distToTag(Tag x) {
+    return sqrt(x.getPositionX() * x.getPositionX() + x.getPositionY() * x.getPositionY() + x.getPositionZ() * x.getPositionZ());
 }
